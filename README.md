@@ -273,3 +273,27 @@ config.yaml            Model and loop configuration
 Most attempts to formalize ethics start with the rules and hope they cover everything. Loophole starts with your intuitions and systematically finds where they break down. It's less "solve ethics" and more "discover what you actually believe by watching it fail."
 
 The same architecture applies anywhere humans write rules for AI systems: content moderation policies, LLM system prompts, codes of conduct, safety specifications. Anywhere there's a gap between what the rules say and what the rules mean, Loophole will find it.
+# Loophole
+
+Loophole includes a fourth, independent scoring-guide mode for stress-testing
+one text-response human scoring guide. It keeps the submitted guide as version
+1, infers intended evidence and ordered credit codes for user confirmation,
+then runs under-crediting and over-crediting adversaries against a blind scorer
+and reviewer. Generated responses are illustrative hypotheses, not observed
+student responses or evidence of scorer reliability.
+
+## Mode 4: scoring
+
+```text
+python -m loophole.scoring.main new --name "Item 1" --stem stem.md --guide guide.md --context rules.md
+loophole scoring resume SESSION_ID
+loophole scoring list
+loophole scoring visualize SESSION_ID --output report.html
+```
+
+`--stem`, `--guide`, and `--context` accept UTF-8 text/Markdown files or
+literal text. When content is omitted interactively, paste it and finish with a
+line containing `END`; blank lines are preserved. Scoring sessions are stored
+under `<session_dir>/scoring/`, separate from Legal mode sessions. Proposed
+guide changes require a successful validation and explicit acceptance; rejected
+or deferred findings and all decision/version history remain in the session.

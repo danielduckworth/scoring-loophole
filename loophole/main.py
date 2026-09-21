@@ -23,6 +23,11 @@ from loophole.session import SessionManager
 app = typer.Typer(name="loophole", add_completion=False)
 console = Console()
 
+# Mode 4 is a separate command group so existing Legal commands, defaults,
+# and session listings remain backwards compatible.
+from loophole.scoring.main import app as scoring_app
+app.add_typer(scoring_app, name="scoring", help="Stress-test educational human scoring guides")
+
 
 def _load_config() -> dict:
     config_path = Path("config.yaml")
