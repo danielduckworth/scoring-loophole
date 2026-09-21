@@ -285,7 +285,7 @@ student responses or evidence of scorer reliability.
 ## Mode 4: scoring
 
 ```text
-python -m loophole.scoring.main new --name "Item 1" --stem stem.md --guide guide.md --context rules.md
+uv run python -m loophole.scoring.main new --name "Item 1" --stem stem.md --guide guide.md --context rules.md
 loophole scoring resume SESSION_ID
 loophole scoring list
 loophole scoring visualize SESSION_ID --output report.html

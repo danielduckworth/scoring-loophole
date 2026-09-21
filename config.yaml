@@ -1,25 +1,25 @@
 model:
-  default: "claude-sonnet-4-20250514"
-  bot: "claude-haiku-4-5-20251001"  # Weaker model for the chatbot being tested
+  default: "gpt-4o"
+  bot: "gpt-4o"  # Weaker model for the chatbot being tested
   max_tokens: 4096
   # Optional per-role provider overrides (uncomment to use):
-  # providers:
-  #   legislator:
-  #     provider: anthropic
-  #     model: claude-sonnet-4-20250514
-  #   loophole_finder:
-  #     provider: openai
-  #     model: gpt-4o
-  #   overreach_finder:
-  #     provider: ollama
-  #     model: llama3.1:70b
-  #     base_url: http://localhost:11434/v1
-  #   judge:
-  #     provider: anthropic
-  #     model: claude-sonnet-4-20250514
-  #   bot:
-  #     provider: anthropic
-  #     model: claude-haiku-4-5-20251001
+  providers:
+    legislator:
+      provider: openai
+      model: gpt-4o
+    loophole_finder:
+      provider: openai
+      model: gpt-4o
+    overreach_finder:
+      provider: ollama
+      model: llama3.1:70b
+      base_url: http://localhost:11434/v1
+    judge:
+      provider: openai
+      model: gpt-4o
+    bot:
+      provider: openai
+      model: gpt-4o
 
 temperatures:
   legislator: 0.4
