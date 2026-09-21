@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from pydantic import BaseModel, Field
+from typing import Annotated
+from pydantic import BaseModel, Field, StringConstraints
+
+
+NonBlankText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
 
 class FindingType(str, Enum):
@@ -49,6 +53,18 @@ class GuideVersion(BaseModel):
     reason: str = "original guide"
 
 
+class RevisionEdit(BaseModel):
+    old_text: NonBlankText
+    new_text: str
+
+
+class ValidationCheck(BaseModel):
+    scope: str
+    target_id: str
+    passed: bool
+    details: NonBlankText
+
+
 class ScoringCase(BaseModel):
     id: str
     round: int
@@ -58,13 +74,19 @@ class ScoringCase(BaseModel):
     likely_code: str | None = None
     proposed_code: str | None = None
     proposed_revision: str | None = None
+    proposal_type: str | None = None
+    proposal_edits: list[RevisionEdit] = Field(default_factory=list)
+    proposal_supporting_passages: list[str] = Field(default_factory=list)
     guide_passages: list[str] = Field(default_factory=list)
     reasoning: str = ""
     uncertainty: str | None = None
     status: str = "pending"
     decision: ReviewAction | None = None
     decision_note: str | None = None
+    # The guide used to obtain likely_code. This is immutable scoring provenance.
     guide_version: int = 1
+    scoring_history: list[dict] = Field(default_factory=list)
+    accepted_guide_version: int | None = None
 
 
 class ValidationResult(BaseModel):
@@ -72,6 +94,7 @@ class ValidationResult(BaseModel):
     passes: bool
     details: str = ""
     checks: list[str] = Field(default_factory=list)
+    check_results: list[ValidationCheck] = Field(default_factory=list)
     guide_version: int
     created_at: datetime = Field(default_factory=datetime.now)
 
@@ -88,6 +111,7 @@ class ScoringSessionState(BaseModel):
     cases: list[ScoringCase] = Field(default_factory=list)
     validations: list[ValidationResult] = Field(default_factory=list)
     decisions: list[dict] = Field(default_factory=list)
+    processing_failures: list[dict] = Field(default_factory=list)
     current_round: int = 0
     max_rounds: int = 10
     cases_per_agent: int = 3

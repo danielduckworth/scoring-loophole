@@ -22,6 +22,8 @@ class ScoringSessionManager:
         (directory / "case_log.md").write_text(render_case_log(state), encoding="utf-8")
     def load(self, session_id: str) -> ScoringSessionState:
         return ScoringSessionState.model_validate_json((self.base_dir / session_id / "state.json").read_text(encoding="utf-8"))
+    def report_path(self, session_id: str) -> Path:
+        return self.base_dir / session_id / "report.html"
     def list_sessions(self) -> list[dict]:
         result = []
         if not self.base_dir.exists(): return result
@@ -35,5 +37,5 @@ class ScoringSessionManager:
 def render_case_log(state: ScoringSessionState) -> str:
     lines = [f"# Scoring Case Log — {state.name}", f"*Session: {state.session_id}*", "", "## Confirmed intent", "\n".join(f"- {x}" for x in (state.intent.evidence if state.intent else [])), ""]
     for case in state.cases:
-        lines += [f"## Case {case.id} — {case.finding_type.value}", f"**Status:** {case.status}", f"**Response (illustrative):** {case.response}", f"**Likely code under guide:** {case.likely_code}", f"**Proposed intended code:** {case.proposed_code}", f"**Proposed revision:** {case.proposed_revision or 'None.'}", f"**Guide passages:** {' | '.join(case.guide_passages)}", f"**Reasoning:** {case.reasoning}", f"**Uncertainty:** {case.uncertainty or 'None recorded.'}", ""]
+        lines += [f"## Case {case.id} — {case.finding_type.value}", f"**Status:** {case.status}", f"**Scored using guide:** v{case.guide_version}", f"**Accepted as guide:** {f'v{case.accepted_guide_version}' if case.accepted_guide_version else 'Not accepted.'}", f"**Response (illustrative):** {case.response}", f"**Likely code under guide:** {case.likely_code}", f"**Proposed intended code:** {case.proposed_code}", f"**Proposed revision:** {case.proposed_revision or 'None.'}", f"**Guide passages:** {' | '.join(case.guide_passages)}", f"**Reasoning:** {case.reasoning}", f"**Uncertainty:** {case.uncertainty or 'None recorded.'}", ""]
     return "\n".join(lines)
